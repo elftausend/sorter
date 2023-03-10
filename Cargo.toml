@@ -7,5 +7,7 @@ edition = "2021"
 
 [dependencies]
 fastrand = "1.9.0"
-macroquad = "0.3.25"
+macroquad = {version = "0.3.25", default-features=false}
 portaudio = "0.7.0"
+
+[dev-dependencies]

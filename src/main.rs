@@ -2,7 +2,8 @@ mod audio;
 
 use std::cmp::Ordering;
 
-use macroquad::prelude::*;
+use audio::{play_sine, SAMPLE_RATE, FREQ, val_to_freq};
+use macroquad::{prelude::*, audio::play_sound};
 
 pub trait Sorter {
     fn next(&mut self);
@@ -49,6 +50,7 @@ impl<'a> Sorter for BubbleSort<'a> {
             self.data.swap(self.current, self.current + 1);
         }
 
+        unsafe {&FREQ}.store(val_to_freq(self.current as f32) as usize, std::sync::atomic::Ordering::SeqCst);
         self.current += 1;
     }
 
@@ -57,22 +59,22 @@ impl<'a> Sorter for BubbleSort<'a> {
     }
 }
 
-
 #[macroquad::main("Sorter")]
 async fn main() {
-    let mut data = (1..8).into_iter().map(|val| val as f32).collect::<Vec<f32>>();
+    let mut data = (1..30).into_iter().map(|val| val as f32).collect::<Vec<f32>>();
     fastrand::shuffle(&mut data);
     let data_len = data.len();
 
-    /*let mut sort = BubbleSort {
+    let mut sort = BubbleSort {
         max_iter: data.len()-1,
         data: &mut data,
         current: 0,
-    };*/
+    };
 
-    let mut sort = BogoSort { data: &mut data };
+    // let mut sort = BogoSort { data: &mut data };
 
-
+    let _stream = play_sine(SAMPLE_RATE).unwrap();
+    
     let mut time = get_time();
     
     loop {
